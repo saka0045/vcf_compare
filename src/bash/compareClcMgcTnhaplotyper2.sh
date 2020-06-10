@@ -158,6 +158,7 @@ CMD="mkdir ${HAPPY_DIR}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
 logInfo "Running hap.py to compare CLC and filtered MGC VCF"
+HAPPY_ARGS="-o ${HAPPY_DIR}/${SAMPLE}_CLC_MGC -r ${REF_GENOME} --engine=scmp-somatic"
 CMD="${HAPPY} ${CLC_VCF} ${FILTERED_MGC_VCF} ${HAPPY_ARGS}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
