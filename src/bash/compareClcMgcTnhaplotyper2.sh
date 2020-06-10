@@ -129,9 +129,8 @@ logInfo "Sample Name: ${SAMPLE}"
 
 # Check files exists
 ORIGINAL_CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
-
 MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}.vcf"
-validateFile "${CLC_VCF}"
+validateFile "${ORIGINAL_CLC_VCF}"
 validateFile "${MGC_VCF}"
 
 # Source python 2.7.10
