@@ -64,6 +64,7 @@ HAPPY_ARGS=""
 FP_VCF=""
 FN_VCF=""
 HAPPY_VCF=""
+ORIGINAL_CLC_VCF=""
 
 ##################################################
 #Source Pipeline Profile
@@ -127,7 +128,8 @@ logInfo "Processing directory: ${SAMPLEDIR}"
 logInfo "Sample Name: ${SAMPLE}"
 
 # Check files exists
-CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf.gz"
+ORIGINAL_CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
+
 MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}.vcf"
 validateFile "${CLC_VCF}"
 validateFile "${MGC_VCF}"
@@ -139,10 +141,11 @@ logInfo "Executing command: ${CMD}"
 eval ${CMD}
 
 # bgzip and tabix the original CLC VCF
-logInfo "bgzipping the original CLC VCF: ${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
-CMD="${BGZIP} ${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
+logInfo "bgzipping the original CLC VCF: ${ORIGINAL_CLC_VCF}"
+CMD="${BGZIP} ${ORIGINAL_CLC_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
+CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf.gz"
 logInfo "tabix-ing the bgzipped CLC VCF: ${CLC_VCF}"
 CMD="${TABIX} -p vcf ${CLC_VCF}"
 logInfo "Executing command: ${CMD}"
