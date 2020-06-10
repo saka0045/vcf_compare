@@ -123,8 +123,14 @@ SAMPLEDIR=${SAMPLEDIR%/}
 
 # Get the sample name
 SAMPLE=$(basename ${SAMPLEDIR})
-logInfo "Processing sample: ${SAMPLE}"
-logInfo "in: ${SAMPLEDIR}"
+logInfo "Processing directory: ${SAMPLEDIR}"
+logInfo "Sample Name: ${SAMPLE}"
+
+# Check files exists
+CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf.gz"
+MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}.vcf"
+validateFile "${CLC_VCF}"
+validateFile "${MGC_VCF}"
 
 # Source python 2.7.10
 logInfo "Sourcing python 2.7.10"
@@ -137,14 +143,12 @@ logInfo "bgzipping the original CLC VCF: ${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
 CMD="${BGZIP} ${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
-CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf.gz"
 logInfo "tabix-ing the bgzipped CLC VCF: ${CLC_VCF}"
 CMD="${TABIX} -p vcf ${CLC_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
 
 # Filter the "strand_artifact" variants from MGC VCF
-MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}.vcf"
 logInfo "Filtering strand_artifact variants from MGC VCF: ${MGC_VCF}"
 FILTERED_MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}_filtered.vcf"
 CMD="${BCFTOOLS} view -e 'FILTER=\"strand_artifact\"' ${MGC_VCF} > ${FILTERED_MGC_VCF}"
