@@ -128,7 +128,7 @@ logInfo "Processing directory: ${SAMPLEDIR}"
 logInfo "Sample Name: ${SAMPLE}"
 
 # Check files exists
-ORIGINAL_CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf"
+ORIGINAL_CLC_VCF="${SAMPLEDIR}/${SAMPLE}_final.vcf"
 MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}.vcf"
 validateFile "${ORIGINAL_CLC_VCF}"
 validateFile "${MGC_VCF}"
@@ -144,7 +144,7 @@ logInfo "bgzipping the original CLC VCF: ${ORIGINAL_CLC_VCF}"
 CMD="${BGZIP} ${ORIGINAL_CLC_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
-CLC_VCF="${SAMPLEDIR}/${SAMPLE}_cmb.vcf.gz"
+CLC_VCF="${SAMPLEDIR}/${SAMPLE}_final.vcf.gz"
 logInfo "tabix-ing the bgzipped CLC VCF: ${CLC_VCF}"
 CMD="${TABIX} -p vcf ${CLC_VCF}"
 logInfo "Executing command: ${CMD}"
