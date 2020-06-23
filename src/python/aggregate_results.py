@@ -13,16 +13,49 @@ def main():
         "-i", dest="input_directory", required=True,
         help="Full path to the input directory with the *.summary.csv files"
     )
+    parser.add_argument(
+        "-o", dest="output_directory", required=True,
+        help="Full path to the output directory to save result files"
+    )
 
     args = parser.parse_args()
 
     input_directory = os.path.normpath(args.input_directory)
     file_list = os.listdir(input_directory)
+    output_directory = os.path.normpath(args.output_directory)
 
     result_dict = {}
     parse_summary_file(file_list, input_directory, result_dict)
 
-    print(result_dict)
+    # Make the result file per variant type
+    write_result_file(output_directory, result_dict, "INDEL")
+    write_result_file(output_directory, result_dict, "SNP")
+    write_result_file(output_directory, result_dict, "ALL")
+
+
+def write_result_file(output_directory, result_dict, variant_type):
+    """
+    Writes the csv result file based on the variant_type
+    :param output_directory:
+    :param result_dict:
+    :param variant_type: variant_type string in result_dict; "INDEL", "SNP" or "ALL"
+    :return:
+    """
+    result_file = open(output_directory + "/" + variant_type + ".csv", "w")
+    result_file.write("Sample,Truth,Query,TP,FP,FN,Precision,Recall\n")
+    for sample in result_dict.keys():
+        truth_total = str(result_dict[sample][variant_type]["truth_total"])
+        query_total = str(result_dict[sample][variant_type]["query_total"])
+        true_positive = str(result_dict[sample][variant_type]["true_positive"])
+        false_positive = str(result_dict[sample][variant_type]["false_positive"])
+        false_negative = str(result_dict[sample][variant_type]["false_negative"])
+        precision = str(result_dict[sample][variant_type]["precision"])
+        recall = str(result_dict[sample][variant_type]["recall"])
+        item_to_write = [sample, truth_total, query_total, true_positive, false_positive, false_negative,
+                         precision, recall]
+        result_file.write(",".join(item_to_write))
+        result_file.write("\n")
+    result_file.close()
 
 
 def parse_summary_file(file_list, input_directory, result_dict):
