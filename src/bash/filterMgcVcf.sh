@@ -124,6 +124,7 @@ logInfo "Processing directory: ${SAMPLEDIR}"
 logInfo "Sample Name: ${SAMPLE}"
 
 # Check files exists
+HAPPY_DIR="${SAMPLEDIR}/hap.py_out"
 HAPPY_FP_VCF="${HAPPY_DIR}/${SAMPLE}_CLC_MGC_false_positives.vcf"
 HAPPY_FN_VCF="${HAPPY_DIR}/${SAMPLE}_CLC_MGC_false_negatives.vcf"
 AF_FILTERED_MGC_VCF="${SAMPLEDIR}/mgc/reports/${SAMPLE}_filtered.vcf"
@@ -135,7 +136,6 @@ validateFile "${CLC_VCF}"
 
 
 # Grep the coordinates from hap.py FP VCF
-HAPPY_DIR="${SAMPLEDIR}/hap.py_out"
 FP_COORDINATES="${HAPPY_DIR}/${SAMPLE}_CLC_MGC_false_positives_coordinates"
 CMD="${GREP} -v \"^#\" ${HAPPY_FP_VCF} | cut -f2 > ${FP_COORDINATES}"
 logInfo "Executing command: ${CMD}"
