@@ -24,6 +24,7 @@ def main():
     file_list = os.listdir(input_directory)
     output_directory = os.path.normpath(args.output_directory)
 
+    # Parse all of the .summary.csv files
     result_dict = {}
     parse_summary_file(file_list, input_directory, result_dict)
 
