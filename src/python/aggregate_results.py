@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+"""
+Script to parse out the .summary.csv file from hap.py and aggregate the results to
+separate result files based on the variant type
+"""
+
 __author__ = "Yuta Sakai"
 
 

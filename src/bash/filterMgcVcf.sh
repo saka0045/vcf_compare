@@ -58,7 +58,7 @@ FP_COORDINATES=""
 FN_COORDINATES=""
 AF_FILTERED_MGC_VCF=""
 FP_FILTERED_MGC_VCF=""
-FN_FILTERED_MGC_VCF=""
+FN_FILTERED_CLC_VCF=""
 CLC_VCF=""
 ZGREP=""
 
@@ -157,11 +157,11 @@ logInfo "Executing command: ${CMD}"
 eval ${CMD}
 
 # Filter the MGC VCF to the false negatives
-FN_FILTERED_MGC_VCF="${SAMPLEDIR}/${SAMPLE}_CLC_false_negatives.vcf"
-CMD="${ZGREP} \"^#\" ${CLC_VCF} > ${FN_FILTERED_MGC_VCF}"
+FN_FILTERED_CLC_VCF="${SAMPLEDIR}/${SAMPLE}_CLC_false_negatives.vcf"
+CMD="${ZGREP} \"^#\" ${CLC_VCF} > ${FN_FILTERED_CLC_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
-CMD="${ZGREP} -f ${FN_COORDINATES} ${CLC_VCF} >> ${FN_FILTERED_MGC_VCF}"
+CMD="${ZGREP} -f ${FN_COORDINATES} ${CLC_VCF} >> ${FN_FILTERED_CLC_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
 
