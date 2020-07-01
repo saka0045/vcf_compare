@@ -35,6 +35,19 @@ def main():
     bed_file = open(output_directory + "/" + sample_name + "_false_positive.bed", "w")
 
     # Parse the vcf file and make it into a bed file
+    make_bed_from_vcf(bed_file, vcf_file)
+
+    vcf_file.close()
+    bed_file.close()
+
+
+def make_bed_from_vcf(bed_file, vcf_file):
+    """
+    Parses out the vcf file and makes it into a 0 based BED file
+    :param bed_file:
+    :param vcf_file:
+    :return:
+    """
     for line in vcf_file:
         # Get header information
         if line.startswith("#CHROM"):
@@ -58,9 +71,6 @@ def main():
             # write out the result to the bed file
             result_to_write = [chrom, str(bed_start_position), str(bed_stop_position)]
             bed_file.write("\t".join(result_to_write) + "\n")
-
-    vcf_file.close()
-    bed_file.close()
 
 
 if __name__ == "__main__":
