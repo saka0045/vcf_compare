@@ -175,3 +175,5 @@ logInfo "Filtering 0/0 calls from fp_check.vcf"
 CMD="${BCFTOOLS} view -e 'FORMAT/GT=\"0/0\"' ${FP_CHECK_VCF} > ${REAL_POSITIVE_VCF}"
 logInfo "Executing command: ${CMD}"
 eval ${CMD}
+
+logInfo "Script is done running"
