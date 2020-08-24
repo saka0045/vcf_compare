@@ -10,6 +10,7 @@ __author__ = "Yuta Sakai"
 import argparse
 import os
 import sys
+import re
 
 
 def main():
@@ -35,6 +36,69 @@ def main():
 
     # Parse the VCFs to gather all variant information
     vcf_result_dict = parse_vcf_to_dict(input_directory)
+
+    # Create the result file
+    result_file = open(output_directory + "/NGSWB_Compare_Results.csv", "w")
+
+    # Parse the NGSWB input file and copy the results to the new result file and append results, if found
+    ngswb_file = parse_ngswb_file_and_write_results(ngswb_file_path, result_file, vcf_result_dict)
+
+    ngswb_file.close()
+    result_file.close()
+
+
+def parse_ngswb_file_and_write_results(ngswb_file_path, result_file, vcf_result_dict):
+    """
+    Parses the NGSWB result file and searches for same result in the vcf_result_dict and writes results
+    to the result file
+    :param ngswb_file_path: This NGSWB result file needs to be in CSV format
+    :param result_file:
+    :param vcf_result_dict:
+    :return:
+    """
+    ngswb_file = open(ngswb_file_path, "r")
+    header_line = ngswb_file.readline().rstrip()
+    result_file.write(header_line)
+    header_item = header_line.split(",")
+    result_file.write(",Found in MGC,MGC Genomic,MGC Position Coverage,MGC Variant Coverage,MGC Variant Frequency\n")
+    for line in ngswb_file:
+        results_written = False
+        line = line.rstrip()
+        result_file.write(line)
+        line_item = line.split(",")
+        sample = line_item[header_item.index("Sample")]
+        # Get the chromosome, position, ref and alt from the "Genomic" cell
+        genomic_position = line_item[header_item.index("Genomic")]
+        chromosome = genomic_position.split(":")[0]
+        position_string = genomic_position.split(".")[1]
+        position = ''.join(filter(str.isdigit, position_string))
+        genomic_change = position_string.replace(position, "")
+        ref = genomic_change.split(">")[0]
+        alt = genomic_change.split(">")[1]
+        # Each position needs to be searched for multi-allelic sites
+        for position_key in vcf_result_dict[sample].keys():
+            if re.search(position, position_key):
+                # See if the chromosome, ref and alt matches
+                if (chromosome == vcf_result_dict[sample][position_key]["chrom"] and
+                        ref == vcf_result_dict[sample][position_key]["ref"] and
+                        alt == vcf_result_dict[sample][position_key]["alt"]):
+                    mgc_genomic_string = (vcf_result_dict[sample][position_key]["chrom"] + ":g." +
+                                          position + vcf_result_dict[sample][position_key]["ref"] + ">" +
+                                          vcf_result_dict[sample][position_key]["alt"])
+                    result_file.write(",Y," + mgc_genomic_string + "," +
+                                      vcf_result_dict[sample][position_key]["total_depth"] + "," +
+                                      vcf_result_dict[sample][position_key]["alt_depth"] + "," +
+                                      vcf_result_dict[sample][position_key]["allele_frequency"] + "," +
+                                      position_key + "\n")
+                    results_written = True
+                else:
+                    continue
+            else:
+                continue
+        # If no results are found, go to the next line
+        if results_written == False:
+            result_file.write(",N\n")
+    return ngswb_file
 
 
 def parse_vcf_to_dict(input_directory):
@@ -86,8 +150,8 @@ def parse_vcf_to_dict(input_directory):
                         "ref": ref,
                         "alt": alt,
                         "alt_depth": alt_depth,
-                        "total_depth": total_depth,
-                        "allele_frequency": real_allele_frequency
+                        "total_depth": str(total_depth),
+                        "allele_frequency": str(real_allele_frequency)
                     }
                     muti_allelic_site.append(position)
                 else:
@@ -100,8 +164,8 @@ def parse_vcf_to_dict(input_directory):
                         "ref": ref,
                         "alt": alt,
                         "alt_depth": alt_depth,
-                        "total_depth": total_depth,
-                        "allele_frequency": real_allele_frequency
+                        "total_depth": str(total_depth),
+                        "allele_frequency": str(real_allele_frequency)
                     }
                     muti_allelic_site.append(position)
         vcf.close()
