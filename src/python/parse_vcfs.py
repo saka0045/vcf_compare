@@ -53,19 +53,23 @@ def parse_vcf(file_list, input_directory, result_file):
                 chrom = line_item[header_items.index("#CHROM")]
                 position = line_item[header_items.index("POS")]
                 ref = line_item[header_items.index("REF")]
-                alt = line_item[header_items.index("ALT")]
+                alt = line_item[header_items.index("ALT")].replace(",", ":")
                 format_line = line_item[header_items.index("FORMAT")].split(":")
                 sample_result = line_item[-1].split(":")
-                allele_depth = sample_result[format_line.index("AD")].split(",")
+                try:
+                    allele_depth = sample_result[format_line.index("AD")].split(",")
+                    ref_depth = allele_depth[0]
+                    alt_depth = allele_depth[1]
+                    total_depth = int(ref_depth) + int(alt_depth)
+                    real_allele_frequency = round(int(alt_depth) / total_depth, 4)
+                except ValueError:
+                    total_depth = "NA"
+                    real_allele_frequency = "NA"
                 # If AF exists, Replaces the "," in case there are multiple allele frequencies reported
                 try:
                     called_allele_frequency = sample_result[format_line.index("AF")].replace(",", ":")
                 except ValueError:
                     called_allele_frequency = "NA"
-                ref_depth = allele_depth[0]
-                alt_depth = allele_depth[1]
-                total_depth = int(ref_depth) + int(alt_depth)
-                real_allele_frequency = round(int(alt_depth) / total_depth, 4)
                 line_to_write = [sample_name, chrom, position, ref, alt, str(total_depth), called_allele_frequency,
                                  str(real_allele_frequency)]
                 result_file.write(",".join(line_to_write))
