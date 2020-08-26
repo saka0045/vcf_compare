@@ -122,7 +122,7 @@ validateFile "${BAM}"
 logInfo "Input BAM: ${BAM}"
 
 # Source the mgc.cfg to get the reference genome
-MGC_CONFIG="${SAMPLEDIR}/ordered_service/pipeline/mgc/mgc.cfg"
+MGC_CONFIG="${SAMPLEDIR}/ordered_service/pipelines/mgc/mgc.cfg"
 validateFile "${MGC_CONFIG}"
 logInfo "Sourcing ${MGC_CONFIG}"
 CMD="source ${MGC_CONFIG}"
