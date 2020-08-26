@@ -22,7 +22,7 @@ Script to run DepthOfCoverage
 <DEFINE PARAMETERS>
 
 Parameters:
-	-i [required] Sample directory - full path to the sample directory
+	-s [required] Sample name
 	-b [required] Input BAM - full path to sample's input BAM
 	-o [required] Output directory - full path to the output directory to save results
 	-r [required] Reference genome - full path to the reference genome fasta file
@@ -98,12 +98,12 @@ set -o nounset
 #BEGIN PROCESSING
 ##################################################
 
-while getopts "hi:b:o:r:t:c:" OPTION
+while getopts "hs:b:o:r:t:c:" OPTION
 
 do
   case $OPTION in
     h) echo "${DOCS}" ; rm ${LOG_FILE} ; exit ;;
-    i) SAMPLEDIR="${OPTARG}" ;;
+    s) SAMPLE="${OPTARG}" ;;
     b) BAM="${OPTARG}" ;;
     o) OUTDIR="${OPTARG}" ;;
     r) REFERENCE="${OPTARG}" ;;
@@ -114,29 +114,25 @@ do
 done
 
 # Check arguments
-validateParm "SAMPLEDIR" "Please specify the option: i"
+validateParm "SAMPLE" "Please specify the option: s"
 validateParm "BAM" "Please specify the option: b"
 validateParm "OUTDIR" "Please specify the option: o"
 validateParm "REFERENCE" "Please specify the option: r"
 validateParm "TARGET_REGION" "Please specify the option: t"
 validateParm "COVERAGE_THRESHOLD" "Please specify the option: c"
-validateDirectory "${SAMPLEDIR}"
 validateFile "${BAM}"
 validateDirectory "${OUTDIR}"
 validateFile "${REFERENCE}"
 validateFile "${TARGET_REGION}"
 
-# Remove any trailing "/" from SAMPLEDIR
-SAMPLEDIR=${SAMPLEDIR%/}
-
-# Get the sample name
-SAMPLE=$(basename ${SAMPLEDIR})
+# Log inputs
 logInfo "Sample Name: ${SAMPLE}"
 logInfo "Reference genome: ${REFERENCE}"
 logInfo "Target region: ${TARGET_REGION}"
 logInfo "Using coverage threshold: ${COVERAGE_THRESHOLD}"
 logInfo "Saving results to: ${OUTDIR}"
 
+# Execute command
 CMD="${DEPTHOFCOVERAGE} --input ${BAM} -L ${TARGET_REGION} -O ${OUTDIR}/${SAMPLE} -R ${REFERENCE} \
 --summary-coverage-threshold ${COVERAGE_THRESHOLD}"
 
