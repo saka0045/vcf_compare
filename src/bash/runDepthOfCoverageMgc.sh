@@ -152,3 +152,5 @@ QSUB_ARGS="-V -q sandbox.q -l h_vmem=50G -m a -M sakai.yuta@mayo.edu -N DepthOfC
 -o /dlmp/sandbox/cgslIS/Yuta/logs -j y"
 CMD="${QSUB} ${QSUB_ARGS} ${COVERAGE_SCRIPT} -s ${SAMPLE} -b ${BAM} -o ${OUTDIR} -r ${Ref} -t ${TARGET_REGION} \
 -c ${COVERAGE_THRESHOLD}"
+logInfo "Executing command: ${CMD}"
+${CMD}
